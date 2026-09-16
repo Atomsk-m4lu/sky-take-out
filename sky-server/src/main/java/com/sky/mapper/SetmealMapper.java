@@ -1,7 +1,13 @@
 package com.sky.mapper;
 
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Select;
+import com.github.pagehelper.Page;
+import com.sky.annotation.AutoFill;
+import com.sky.dto.SetmealPageQueryDTO;
+import com.sky.entity.Setmeal;
+import com.sky.enumeration.OperationType;
+import org.apache.ibatis.annotations.*;
+
+import java.util.List;
 
 @Mapper
 public interface SetmealMapper {
@@ -14,4 +20,28 @@ public interface SetmealMapper {
     @Select("select count(id) from setmeal where category_id = #{categoryId}")
     Integer countByCategoryId(Long id);
 
+    //新增套餐
+    @Insert("insert into setmeal (name, price, category_id, description, image, status, create_time, update_time,create_user,update_user) values (#{name}, #{price}, #{categoryId}, #{description}, #{image}, #{status}, #{createTime}, #{updateTime},#{createUser},#{updateUser})")
+    @Options(useGeneratedKeys = true, keyProperty = "id")
+    @AutoFill(OperationType.INSERT)
+    void insert(Setmeal setmeal);
+
+    //分页查询套餐
+    Page<Setmeal> page(SetmealPageQueryDTO setmealPageQueryDTO);
+
+    //批量删除套餐
+    void deleteBatch(List<Long> ids);
+
+    //修改套餐
+    @AutoFill(OperationType.UPDATE)
+    void update(Setmeal setmeal);
+
+    //根据id查询套餐
+    @Select("select * from setmeal where id = #{id}")
+    Setmeal getById(Long id);
+
+    //套餐起售、停售
+    @Update("update setmeal set status = #{status}, update_time = #{updateTime}, update_user = #{updateUser} where id = #{id}")
+    @AutoFill(OperationType.UPDATE)
+    void updateStatus(Setmeal setmeal);
 }
