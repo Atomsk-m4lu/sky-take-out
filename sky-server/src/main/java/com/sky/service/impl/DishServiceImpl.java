@@ -105,6 +105,9 @@ public class DishServiceImpl implements DishService {
         List<DishVO> dishVOList = new ArrayList<>();
 
         for (Dish d : dishList) {
+            if (dish.getStatus() != null && !dish.getStatus().equals(d.getStatus())) {
+                continue;
+            }
             DishVO dishVO = new DishVO();
             BeanUtils.copyProperties(d,dishVO);
 
@@ -116,5 +119,19 @@ public class DishServiceImpl implements DishService {
         }
 
         return dishVOList;
+    }
+
+    /**
+     * 菜品起售、停售
+     * @param status
+     * @param id
+     */
+    @Override
+    public void startOrStop(Integer status, Long id) {
+        Dish dish = Dish.builder()
+                .id(id)
+                .status(status)
+                .build();
+        dishMapper.update(dish);
     }
 }
